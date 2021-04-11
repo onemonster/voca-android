@@ -5,10 +5,10 @@ import android.os.Bundle
 import com.tedilabs.voca.R
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         // Temporary
         subject_word_text.text = "사과"
@@ -16,5 +16,13 @@ class MainActivity : AppCompatActivity() {
         subject_pronunciation_text.text = "[사:과]"
         mother_word_text.text = "APPLE"
         mother_example_text.text = "There is a shop which sells delicious apple."
+
+        initializeViews()
+    }
+
+    private fun initializeViews() {
+        setting_button.setOnClickListener {
+            startActivity(SettingActivity.intent(this))
+        }
     }
 }
