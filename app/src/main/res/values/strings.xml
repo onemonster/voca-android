@@ -10,4 +10,7 @@
     <string name="share">Share</string>
     <string name="app_version">App Version</string>
 
+    <string name="need_overlay_permission">This app needs Appear on top permission to be used in the lock screen</string>
+    <string name="need_overlay_permission_positive">give permission</string>
+    <string name="need_overlay_permission_negative">use without lock screen</string>
 </resources>

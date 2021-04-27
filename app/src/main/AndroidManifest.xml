@@ -3,6 +3,8 @@
     package="com.tedilabs.voca"
     >
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
