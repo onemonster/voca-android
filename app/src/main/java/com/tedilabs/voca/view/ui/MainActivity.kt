@@ -7,13 +7,20 @@ import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.tedilabs.voca.R
+import com.tedilabs.voca.preference.AppPreference
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     companion object {
         private const val ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 1000
     }
+
+    @Inject
+    lateinit var appPreference: AppPreference
 
     private lateinit var alertDialog: AlertDialog
 
@@ -79,7 +86,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
                 if (!Settings.canDrawOverlays(this)) {
                     alertDialog.show()
                 } else {
-                    // TODO: set preference LOCK_SCREEN_ON to true.
+                    appPreference.lockScreenOn = true
                 }
             }
         }
