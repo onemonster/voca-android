@@ -4,6 +4,7 @@ buildscript {
         kotlin_version = "1.4.32"
         hilt_core_version = '2.35'
         hilt_version = '1.0.0-beta01'
+        retrofit_version = '2.9.0'
     }
     repositories {
         google()

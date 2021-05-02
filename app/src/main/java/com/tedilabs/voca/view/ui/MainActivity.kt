@@ -12,8 +12,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.tedilabs.voca.R
 import com.tedilabs.voca.lock.LockScreenService
+import com.tedilabs.voca.network.service.VersionApiService
 import com.tedilabs.voca.preference.AppPreference
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 import javax.inject.Inject
@@ -36,6 +39,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     @Inject
     lateinit var appPreference: AppPreference
 
+    @Inject
+    lateinit var versionApiService: VersionApiService
+
     private lateinit var alertDialog: AlertDialog
 
     private val isLockScreen: Boolean
@@ -44,6 +50,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("-_-_- onCreate $isLockScreen")
+
+        // TODO: move to viewmodel
+        versionApiService.getAppVersionStatus()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                if (it.updateRequired) {
+                    // TODO: require update
+                    Timber.d("Update required")
+                } else if (it.updateAvailable) {
+                    // TODO: update available
+                    Timber.d("Update available")
+                }
+            }, {
+                Timber.e(it)
+            })
 
         setupIfLockScreen()
 
