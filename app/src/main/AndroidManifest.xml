@@ -20,6 +20,7 @@
         <activity
             android:name=".view.ui.MainActivity"
             android:clearTaskOnLaunch="true"
+            android:label="@string/app_label"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:showOnLockScreen="true"
