@@ -3,7 +3,10 @@
     package="com.tedilabs.voca"
     >
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
 
     <application
         android:name=".App"
@@ -16,7 +19,10 @@
         >
         <activity
             android:name=".view.ui.MainActivity"
+            android:clearTaskOnLaunch="true"
+            android:launchMode="singleInstance"
             android:screenOrientation="portrait"
+            android:showOnLockScreen="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,6 +35,21 @@
             android:name=".view.ui.SettingActivity"
             android:screenOrientation="portrait"
             />
+
+        <service
+            android:name=".lock.LockScreenService"
+            android:description="@string/lock_screen_description"
+            android:exported="false"
+            />
+
+        <receiver
+            android:name=".lock.BootCompleteBroadcastReceiver"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
