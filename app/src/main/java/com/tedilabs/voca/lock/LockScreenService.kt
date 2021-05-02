@@ -101,7 +101,7 @@ class LockScreenService : Service() {
 
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
         val notification = notificationBuilder.setOngoing(true)
-            .setSmallIcon(R.drawable.ic_launcher_background) // TODO: real asset
+            .setSmallIcon(R.drawable.ic_notification)
             .setColor(ContextCompat.getColor(this, R.color.primary))
             .setContentTitle("Voca lock screen") // TODO: strings.xml
             .setContentText("Something Something") // TODO: strings.xml
@@ -119,7 +119,7 @@ class LockScreenService : Service() {
             PendingIntent.getActivity(this, 0, intent, 0)
         }
         val notification: Notification = NotificationCompat.Builder(this)
-            .setSmallIcon(R.drawable.ic_launcher_background) // TODO: real asset
+            .setSmallIcon(R.drawable.ic_notification) // TODO: real asset
             .setColor(ContextCompat.getColor(this, R.color.primary))
             .setContentTitle("Voca lock screen") // TODO: strings.xml
             .setContentText("Something Something") // TODO: strings.xml
