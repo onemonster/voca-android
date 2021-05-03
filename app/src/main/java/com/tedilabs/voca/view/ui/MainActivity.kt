@@ -7,7 +7,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.speech.tts.TextToSpeech
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.tedilabs.voca.R
@@ -19,6 +21,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -44,12 +47,22 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var alertDialog: AlertDialog
 
+    private lateinit var tts: TextToSpeech
+
     private val isLockScreen: Boolean
         get() = intent.getBooleanExtra(LOCK_SCREEN_KEY, false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("-_-_- onCreate $isLockScreen")
+
+        tts = TextToSpeech(this) { status ->
+            when (status) {
+                TextToSpeech.ERROR ->
+                    Toast.makeText(this, "Text to speech error", Toast.LENGTH_SHORT).show()
+                else -> tts.language = Locale.KOREA
+            }
+        }
 
         // TODO: move to viewmodel
         versionApiService.getAppVersionStatus()
@@ -101,6 +114,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         setupIfLockScreen()
     }
 
+    override fun onPause() {
+        super.onPause()
+        tts.stop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tts.shutdown()
+    }
+
     private fun setupIfLockScreen() {
         if (!isLockScreen) return
 
@@ -121,6 +144,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private fun initializeViews() {
         setting_button.setOnClickListener {
             startActivity(SettingActivity.intent(this))
+        }
+        sound_button.setOnClickListener {
+            tts.speak("사과", TextToSpeech.QUEUE_FLUSH, null, "사과")
         }
     }
 

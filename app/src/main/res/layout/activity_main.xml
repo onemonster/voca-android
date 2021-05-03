@@ -59,6 +59,16 @@
             tools:text="사과"
             />
 
+        <ImageButton
+            android:id="@+id/sound_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sound"
+            app:layout_constraintBottom_toBottomOf="@+id/subject_word_text"
+            app:layout_constraintStart_toEndOf="@+id/subject_word_text"
+            app:layout_constraintTop_toTopOf="@+id/subject_word_text"
+            />
+
         <TextView
             android:id="@+id/subject_type_text"
             android:layout_width="wrap_content"
