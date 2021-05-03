@@ -33,11 +33,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".view.ui.SettingActivity"
-            android:screenOrientation="portrait"
-            />
-
         <service
             android:name=".lock.LockScreenService"
             android:description="@string/lock_screen_description"

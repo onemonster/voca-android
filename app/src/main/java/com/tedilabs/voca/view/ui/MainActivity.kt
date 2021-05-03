@@ -12,6 +12,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.commit
 import com.tedilabs.voca.R
 import com.tedilabs.voca.lock.LockScreenService
 import com.tedilabs.voca.network.service.VersionApiService
@@ -47,22 +48,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private lateinit var alertDialog: AlertDialog
 
-    private lateinit var tts: TextToSpeech
-
     private val isLockScreen: Boolean
         get() = intent.getBooleanExtra(LOCK_SCREEN_KEY, false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("-_-_- onCreate $isLockScreen")
-
-        tts = TextToSpeech(this) { status ->
-            when (status) {
-                TextToSpeech.ERROR ->
-                    Toast.makeText(this, "Text to speech error", Toast.LENGTH_SHORT).show()
-                else -> tts.language = Locale.KOREA
-            }
-        }
 
         // TODO: move to viewmodel
         versionApiService.getAppVersionStatus()
@@ -81,13 +72,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             })
 
         setupIfLockScreen()
-
-        // Temporary
-        subject_word_text.text = "사과"
-        subject_type_text.text = "NOUN"
-        subject_pronunciation_text.text = "[사:과]"
-        mother_word_text.text = "APPLE"
-        mother_example_text.text = "There is a shop which sells delicious apple."
 
         initializeViews()
 
@@ -114,16 +98,6 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         setupIfLockScreen()
     }
 
-    override fun onPause() {
-        super.onPause()
-        tts.stop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        tts.shutdown()
-    }
-
     private fun setupIfLockScreen() {
         if (!isLockScreen) return
 
@@ -142,11 +116,15 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     private fun initializeViews() {
-        setting_button.setOnClickListener {
-            startActivity(SettingActivity.intent(this))
+        supportFragmentManager.commit {
+            add(R.id.main_fragment_container, MainFragment.create(), MainFragment.TAG)
         }
-        sound_button.setOnClickListener {
-            tts.speak("사과", TextToSpeech.QUEUE_FLUSH, null, "사과")
+    }
+
+    fun showSettings() {
+        supportFragmentManager.commit {
+            add(R.id.main_fragment_container, SettingFragment.create(), SettingFragment.TAG)
+            addToBackStack(null)
         }
     }
 
