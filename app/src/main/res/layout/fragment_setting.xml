@@ -26,6 +26,7 @@
         android:src="@drawable/back"
         app:layout_constraintBottom_toBottomOf="@+id/setting_header"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/setting_header"
         />
 
     <androidx.constraintlayout.widget.ConstraintLayout
