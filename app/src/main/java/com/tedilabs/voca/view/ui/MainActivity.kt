@@ -7,9 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.speech.tts.TextToSpeech
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
@@ -17,12 +15,11 @@ import com.tedilabs.voca.R
 import com.tedilabs.voca.lock.LockScreenService
 import com.tedilabs.voca.network.service.VersionApiService
 import com.tedilabs.voca.preference.AppPreference
+import com.tedilabs.voca.util.IntentUtil
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -46,7 +43,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     @Inject
     lateinit var versionApiService: VersionApiService
 
-    private lateinit var alertDialog: AlertDialog
+    private lateinit var overlayPermissionAlertDialog: AlertDialog
 
     private val isLockScreen: Boolean
         get() = intent.getBooleanExtra(LOCK_SCREEN_KEY, false)
@@ -61,11 +58,25 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it.updateRequired) {
-                    // TODO: require update
-                    Timber.d("Update required")
+                    // TODO: handle case where user goes back without updating
+                    AlertDialog.Builder(this)
+                        .setMessage(R.string.update_required)
+                        .setPositiveButton(R.string.update_required_positive) { dialog, _ ->
+                            IntentUtil.startMarket(this)
+                        }
+                        .setCancelable(false)
+                        .show()
                 } else if (it.updateAvailable) {
                     // TODO: update available
-                    Timber.d("Update available")
+                    AlertDialog.Builder(this)
+                        .setMessage(R.string.update_available)
+                        .setPositiveButton(R.string.update_available_positive) { dialog, _ ->
+                            IntentUtil.startMarket(this)
+                        }
+                        .setNegativeButton(R.string.update_available_negative) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
                 }
             }, {
                 Timber.e(it)
@@ -75,7 +86,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
         initializeViews()
 
-        alertDialog = AlertDialog.Builder(this)
+        overlayPermissionAlertDialog = AlertDialog.Builder(this)
             .setMessage(R.string.need_overlay_permission)
             .setPositiveButton(R.string.need_overlay_permission_positive) { dialog, _ ->
                 requestPermission()
@@ -87,7 +98,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             .create()
 
         if (!checkOverlayPermission()) {
-            alertDialog.show()
+            overlayPermissionAlertDialog.show()
         }
     }
 
@@ -154,7 +165,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 if (!Settings.canDrawOverlays(this)) {
-                    alertDialog.show()
+                    overlayPermissionAlertDialog.show()
                 } else {
                     appPreference.lockScreenOn = true
                     LockScreenService.start(this)
