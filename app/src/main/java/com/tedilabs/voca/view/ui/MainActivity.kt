@@ -8,13 +8,12 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.WindowManager
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.commit
 import com.tedilabs.voca.R
 import com.tedilabs.voca.lock.LockScreenService
 import com.tedilabs.voca.network.service.VersionApiService
-import com.tedilabs.voca.preference.AppPreference
 import com.tedilabs.voca.util.IntentUtil
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -23,7 +22,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : BaseActivity(R.layout.activity_main) {
 
     companion object {
         private const val ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE = 1000
@@ -38,10 +37,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     }
 
     @Inject
-    lateinit var appPreference: AppPreference
-
-    @Inject
     lateinit var versionApiService: VersionApiService
+
+    private val lockViewModel: LockViewModel by viewModels()
 
     private lateinit var overlayPermissionAlertDialog: AlertDialog
 
@@ -89,16 +87,14 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         overlayPermissionAlertDialog = AlertDialog.Builder(this)
             .setMessage(R.string.need_overlay_permission)
             .setPositiveButton(R.string.need_overlay_permission_positive) { dialog, _ ->
-                requestPermission()
-                dialog.dismiss()
+                getOverlayPermission()
             }
-            .setNegativeButton(R.string.need_overlay_permission_negative) { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton(R.string.need_overlay_permission_negative) { dialog, _ -> }
+            .setOnCancelListener { lockViewModel.turnLockScreenOff() }
             .create()
 
         if (!checkOverlayPermission()) {
-            overlayPermissionAlertDialog.show()
+            requestOverlayPermission()
         }
     }
 
@@ -128,7 +124,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private fun initializeViews() {
         supportFragmentManager.commit {
-            add(R.id.main_fragment_container, MainFragment.create(), MainFragment.TAG)
+            add(R.id.main_fragment_container, MainFragment.create(isLockScreen), MainFragment.TAG)
         }
     }
 
@@ -139,8 +135,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
+    fun requestOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            overlayPermissionAlertDialog.show()
+        } else {
+            getOverlayPermission()
+        }
+    }
+
     private fun checkOverlayPermission(): Boolean {
-        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             Settings.canDrawOverlays(this)
         } else {
             // TOOD
@@ -148,8 +152,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         }
     }
 
-    private fun requestPermission() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+    private fun getOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val intent = Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:$packageName")
@@ -163,12 +167,12 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ACTION_MANAGE_OVERLAY_PERMISSION_REQUEST_CODE) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    overlayPermissionAlertDialog.show()
-                } else {
-                    appPreference.lockScreenOn = true
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+                    lockViewModel.turnLockScreenOn()
                     LockScreenService.start(this)
+                } else {
+                    lockViewModel.turnLockScreenOff()
                 }
             }
         }

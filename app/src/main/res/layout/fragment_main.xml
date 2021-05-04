@@ -45,13 +45,14 @@
         app:layout_constraintTop_toBottomOf="@+id/logo"
         >
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/subject_word_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="54dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="54dp"
+            android:autoSizeTextType="uniform"
             android:textColor="@color/primary_font"
             android:textSize="48dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -135,7 +136,7 @@
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="40dp"
             android:overScrollMode="never"
-            app:layout_constraintBottom_toTopOf="@+id/unlock_button"
+            app:layout_constraintBottom_toTopOf="@+id/prev_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -193,6 +194,24 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/use_as_lock_screen_button"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="@dimen/grid"
+            android:layout_marginEnd="@dimen/grid"
+            android:layout_marginBottom="@dimen/grid"
+            android:autoSizeTextType="uniform"
+            android:background="@drawable/use_as_lock_screen_button_background"
+            android:paddingHorizontal="10dp"
+            android:text="@string/use_app_on_lock_screen"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/prev_button"
+            app:layout_constraintStart_toStartOf="parent"
+            />
 
         <ImageButton
             android:id="@+id/prev_button"

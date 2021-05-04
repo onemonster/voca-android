@@ -2,24 +2,36 @@ package com.tedilabs.voca.view.ui
 
 import android.app.Activity
 import android.os.Bundle
+import android.provider.Settings
 import android.speech.tts.TextToSpeech
 import android.view.View
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tedilabs.voca.R
 import com.tedilabs.voca.model.Example
 import kotlinx.android.synthetic.main.fragment_main.*
+import timber.log.Timber
 import java.util.*
 
-class MainFragment : Fragment(R.layout.fragment_main) {
+class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     private lateinit var tts: TextToSpeech
 
     companion object {
         const val TAG = "Main"
-        fun create() = MainFragment()
+
+        private const val LOCK_SCREEN_KEY = "lock-screen"
+
+        fun create(lockScreenOn: Boolean) = MainFragment().apply {
+            arguments = Bundle().apply { putBoolean(LOCK_SCREEN_KEY, lockScreenOn) }
+        }
     }
+
+    private val lockViewModel: LockViewModel by activityViewModels()
+
+    private val isLockScreen: Boolean
+        get() = arguments?.getBoolean(LOCK_SCREEN_KEY) ?: false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +47,7 @@ class MainFragment : Fragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeViews(requireActivity())
+        observeViewModels()
     }
 
     override fun onPause() {
@@ -51,8 +64,19 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         setting_button.setOnClickListener {
             (activity as MainActivity).showSettings()
         }
+
         sound_button.setOnClickListener {
             tts.speak("사과", TextToSpeech.QUEUE_FLUSH, null, "사과")
+        }
+
+        unlock_button.visibility = if (isLockScreen) View.VISIBLE else View.GONE
+
+        use_as_lock_screen_button.setOnClickListener {
+            if (Settings.canDrawOverlays(activity)) {
+                lockViewModel.turnLockScreenOn()
+            } else {
+                (activity as MainActivity).requestOverlayPermission()
+            }
         }
 
         // Temporary
@@ -106,5 +130,15 @@ class MainFragment : Fragment(R.layout.fragment_main) {
                 ),
             )
         }
+    }
+
+    private fun observeViewModels() {
+        lockViewModel.observeLockScreenOn()
+            .subscribe({ lockScreenOn ->
+                use_as_lock_screen_button.visibility = if (lockScreenOn) View.GONE else View.VISIBLE
+            }, {
+                Timber.e(it)
+            })
+            .disposeOnDestroyView()
     }
 }

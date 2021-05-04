@@ -9,6 +9,7 @@
     <string name="feedback">Feedback</string>
     <string name="review">Review</string>
     <string name="share">Share</string>
+    <string name="use_app_on_lock_screen">Use app on lock screen</string>
     <string name="app_version">App Version</string>
 
     <string name="update_required">An update is required to use this app.</string>
