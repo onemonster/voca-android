@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     android:clipToPadding="false"
-    android:padding="@dimen/grid"
+    android:paddingHorizontal="@dimen/grid"
     >
 
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="30dp"
         android:src="@drawable/logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,12 +35,11 @@
         android:id="@+id/container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="@dimen/grid"
         android:layout_marginBottom="@dimen/grid"
         android:background="@drawable/card_background"
         android:elevation="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/ok_button"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo"
@@ -50,7 +49,9 @@
             android:id="@+id/subject_word_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginStart="54dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="54dp"
             android:textColor="@color/primary_font"
             android:textSize="48dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -63,9 +64,12 @@
             android:id="@+id/sound_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/sound_button_background"
+            android:elevation="2dp"
             android:src="@drawable/sound"
             app:layout_constraintBottom_toBottomOf="@+id/subject_word_text"
-            app:layout_constraintStart_toEndOf="@+id/subject_word_text"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/subject_word_text"
             />
 
@@ -108,117 +112,112 @@
             tools:text="[사:과]"
             />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/buffer"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/definition_list"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            android:paddingHorizontal="10dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="25dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/subject_divide_text"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_definition"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/example_list"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="40dp"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toTopOf="@+id/unlock_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/definition_list"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_example"
+            />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/unlock_button"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="@dimen/grid"
+            android:layout_marginEnd="@dimen/grid"
+            android:layout_marginBottom="@dimen/grid"
+            android:background="@drawable/unlock_screen_button_background"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/prev_button"
+            app:layout_constraintStart_toStartOf="parent"
             >
 
-            <TextView
-                android:id="@+id/mother_word_text"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black_font"
-                android:textSize="32dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="APPLE"
-                />
+                >
+
+                <ImageView
+                    android:id="@+id/lock_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/lock"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/unlock_screen"
+                    android:textColor="@color/white"
+                    android:textSize="18dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/lock_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <View
-            android:id="@+id/underline"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="9dp"
-            android:background="@color/gray4B"
-            app:layout_constraintEnd_toEndOf="@+id/buffer"
-            app:layout_constraintStart_toStartOf="@+id/buffer"
-            app:layout_constraintTop_toBottomOf="@+id/buffer"
+        <ImageButton
+            android:id="@+id/prev_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/grid"
+            android:layout_marginBottom="@dimen/grid"
+            android:background="@drawable/arrow_button_background"
+            android:src="@drawable/left_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/next_button"
             />
 
-        <TextView
-            android:id="@+id/mother_example_text"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="37dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="37dp"
-            android:layout_marginBottom="15dp"
-            android:gravity="center_horizontal"
-            android:textColor="@color/black_font"
-            android:textSize="18dp"
+        <ImageButton
+            android:id="@+id/next_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/grid"
+            android:layout_marginBottom="@dimen/grid"
+            android:background="@drawable/arrow_button_background"
+            android:src="@drawable/right_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/underline"
-            app:layout_constraintVertical_bias="0.0"
-            tools:text="There is a shop which sells delicious apple. There is a shop."
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/prev_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        android:height="59dp"
-        android:background="@drawable/button_background"
-        android:drawableLeft="@drawable/left_arrow"
-        android:paddingLeft="12dp"
-        android:paddingRight="16dp"
-        android:text="@string/prev"
-        android:textColor="@color/primary_font"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ok_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
-    <Button
-        android:id="@+id/ok_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:height="59dp"
-        android:background="@drawable/button_background"
-        android:text="@string/ok"
-        android:textColor="@color/primary_font"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/next_button"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/prev_button"
-        />
-
-    <Button
-        android:id="@+id/next_button"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:height="59dp"
-        android:background="@drawable/button_background"
-        android:drawableRight="@drawable/right_arrow"
-        android:paddingLeft="16dp"
-        android:paddingRight="12dp"
-        android:text="@string/next"
-        android:textColor="@color/primary_font"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/ok_button"
-        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

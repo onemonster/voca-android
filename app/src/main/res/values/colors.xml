@@ -15,4 +15,9 @@
     <color name="gray9F">#9F9F9F</color>
     <color name="white">#FFFFFF</color>
     <color name="white_50">#80FFFFFF</color>
+
+    <color name="default_button">#B7B7B7</color>
+    <color name="default_button_50">#80B7B7B7</color>
+    <color name="example_font">#626262</color>
+    <color name="example_translation_font">#959595</color>
 </resources>
