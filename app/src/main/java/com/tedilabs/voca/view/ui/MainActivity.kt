@@ -79,6 +79,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             }, {
                 Timber.e(it)
             })
+            .disposeOnDestroy()
 
         setupIfLockScreen()
 
