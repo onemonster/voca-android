@@ -21,17 +21,10 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     companion object {
         const val TAG = "Main"
 
-        private const val LOCK_SCREEN_KEY = "lock-screen"
-
-        fun create(lockScreenOn: Boolean) = MainFragment().apply {
-            arguments = Bundle().apply { putBoolean(LOCK_SCREEN_KEY, lockScreenOn) }
-        }
+        fun create() = MainFragment()
     }
 
     private val lockViewModel: LockViewModel by activityViewModels()
-
-    private val isLockScreen: Boolean
-        get() = arguments?.getBoolean(LOCK_SCREEN_KEY) ?: false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,14 +62,16 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             tts.speak("사과", TextToSpeech.QUEUE_FLUSH, null, "사과")
         }
 
-        unlock_button.visibility = if (isLockScreen) View.VISIBLE else View.GONE
-
         use_as_lock_screen_button.setOnClickListener {
             if (Settings.canDrawOverlays(activity)) {
                 lockViewModel.turnLockScreenOn()
             } else {
                 (activity as MainActivity).requestOverlayPermission()
             }
+        }
+
+        unlock_button.setOnClickListener {
+            activity.finish()
         }
 
         // Temporary
@@ -136,6 +131,15 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         lockViewModel.observeLockScreenOn()
             .subscribe({ lockScreenOn ->
                 use_as_lock_screen_button.visibility = if (lockScreenOn) View.GONE else View.VISIBLE
+            }, {
+                Timber.e(it)
+            })
+            .disposeOnDestroyView()
+
+        lockViewModel.observeIsLockScreen()
+            .subscribe({ isLockScreen ->
+                unlock_button.visibility = if (isLockScreen) View.VISIBLE else View.GONE
+
             }, {
                 Timber.e(it)
             })

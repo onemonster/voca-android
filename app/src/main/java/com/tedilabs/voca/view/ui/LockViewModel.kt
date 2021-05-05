@@ -13,8 +13,10 @@ class LockViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val lockScreenOnSubject = BehaviorSubject.createDefault(appPreference.lockScreenOn)
+    private val isLockScreenSubject = BehaviorSubject.createDefault(false)
 
     fun observeLockScreenOn(): Observable<Boolean> = lockScreenOnSubject.distinctUntilChanged()
+    fun observeIsLockScreen(): Observable<Boolean> = isLockScreenSubject.distinctUntilChanged()
 
     fun turnLockScreenOn() {
         appPreference.lockScreenOn = true
@@ -24,6 +26,10 @@ class LockViewModel @Inject constructor(
     fun turnLockScreenOff() {
         appPreference.lockScreenOn = false
         lockScreenOnSubject.onNext(false)
+    }
+
+    fun setIsLockScreen(isLockScreen: Boolean) {
+        isLockScreenSubject.onNext(isLockScreen)
     }
 
     fun toggleLockScreen() {

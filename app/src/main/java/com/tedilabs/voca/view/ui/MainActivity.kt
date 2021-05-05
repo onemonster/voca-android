@@ -106,6 +106,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     }
 
     private fun setupIfLockScreen() {
+        lockViewModel.setIsLockScreen(isLockScreen)
+
         if (!isLockScreen) return
 
         Timber.d("-_-_- Setting up for lock screen")
@@ -124,7 +126,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     private fun initializeViews() {
         supportFragmentManager.commit {
-            add(R.id.main_fragment_container, MainFragment.create(isLockScreen), MainFragment.TAG)
+            add(R.id.main_fragment_container, MainFragment.create(), MainFragment.TAG)
         }
     }
 
