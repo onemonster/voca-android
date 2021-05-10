@@ -34,6 +34,10 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
             context.onBackPressed()
         }
 
+        feedback_container.setOnClickListener {
+            IntentUtil.startFeedback(context)
+        }
+
         review_container.setOnClickListener {
             IntentUtil.startMarket(context)
         }
