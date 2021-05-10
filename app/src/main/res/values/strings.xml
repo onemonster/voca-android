@@ -23,4 +23,7 @@
     <string name="need_overlay_permission_negative">use without lock screen</string>
 
     <string name="lock_screen_description">Maintains the Voca lock screen.</string>
+
+    <string name="share_app">Hey check out my app at: %1$s</string>
+    <string name="share_app_chooser">Share this app with friends and study Korean together!</string>
 </resources>

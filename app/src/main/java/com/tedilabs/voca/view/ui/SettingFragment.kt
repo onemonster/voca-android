@@ -42,6 +42,10 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
             IntentUtil.startMarket(context)
         }
 
+        share_container.setOnClickListener {
+            IntentUtil.startShareApp(context)
+        }
+
         use_app_on_lock_screen_toggle.setOnClickListener {
             lockViewModel.toggleLockScreen()
         }
