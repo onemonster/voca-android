@@ -11,6 +11,7 @@ import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.commit
+import com.google.android.gms.ads.AdRequest
 import com.tedilabs.voca.R
 import com.tedilabs.voca.lock.LockScreenService
 import com.tedilabs.voca.network.service.VersionApiService
@@ -18,6 +19,7 @@ import com.tedilabs.voca.util.IntentUtil
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -49,6 +51,8 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("-_-_- onCreate $isLockScreen")
+
+        loadBannerAd()
 
         // TODO: move to viewmodel
         versionApiService.getAppVersionStatus()
@@ -106,6 +110,21 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         setupIfLockScreen()
     }
 
+    override fun onPause() {
+        ad_view.pause()
+        super.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ad_view.resume()
+    }
+
+    override fun onDestroy() {
+        ad_view.destroy()
+        super.onDestroy()
+    }
+
     private fun setupIfLockScreen() {
         lockViewModel.setIsLockScreen(isLockScreen)
 
@@ -144,6 +163,10 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         } else {
             getOverlayPermission()
         }
+    }
+
+    private fun loadBannerAd() {
+        ad_view.loadAd(AdRequest.Builder().build())
     }
 
     private fun checkOverlayPermission(): Boolean {

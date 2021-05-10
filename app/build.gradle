@@ -25,11 +25,15 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "BASE_URL", "\"https://voca-api.x.tedilabs.com/\""
+            resValue "string", "GOOGLE_AD_MOB_APP_ID", "ca-app-pub-2290599312757336~6892272215"
+            resValue "string", "GOOGLE_AD_MOB_TOP_BANNER_UNIT_ID", "ca-app-pub-3940256099942544/6300978111"
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField "String", "BASE_URL", "\"https://voca-api.x.tedilabs.com/\""
+            resValue "string", "GOOGLE_AD_MOB_APP_ID", "ca-app-pub-2290599312757336~6892272215"
+            resValue "string", "GOOGLE_AD_MOB_TOP_BANNER_UNIT_ID", "ca-app-pub-2290599312757336/2600005113"
         }
     }
 
@@ -64,6 +68,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
+
+    // AdMob
+    implementation 'com.google.android.gms:play-services-ads:20.1.0'
 
     // Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
