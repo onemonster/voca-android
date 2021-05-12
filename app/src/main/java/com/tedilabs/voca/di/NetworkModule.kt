@@ -3,7 +3,9 @@ package com.tedilabs.voca.di
 import com.squareup.moshi.Moshi
 import com.tedilabs.voca.BuildConfig
 import com.tedilabs.voca.network.service.VersionApiService
+import com.tedilabs.voca.network.service.WordApiService
 import com.tedilabs.voca.network.service.retrofit.VersionRetrofitService
+import com.tedilabs.voca.network.service.retrofit.WordRetrofitService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,4 +41,9 @@ class NetworkModule {
     @Singleton
     fun provideVersionApiService(retrofit: Retrofit): VersionApiService =
         VersionApiService(retrofit.create(VersionRetrofitService::class.java))
+
+    @Provides
+    @Singleton
+    fun provideWordApiService(retrofit: Retrofit): WordApiService =
+        WordApiService(retrofit.create(WordRetrofitService::class.java))
 }

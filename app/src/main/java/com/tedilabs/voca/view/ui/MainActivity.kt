@@ -15,6 +15,7 @@ import com.google.android.gms.ads.AdRequest
 import com.tedilabs.voca.R
 import com.tedilabs.voca.lock.LockScreenService
 import com.tedilabs.voca.network.service.VersionApiService
+import com.tedilabs.voca.network.service.WordApiService
 import com.tedilabs.voca.util.IntentUtil
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -41,6 +42,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     @Inject
     lateinit var versionApiService: VersionApiService
 
+    @Inject
+    lateinit var wordApiService: WordApiService
+
     private val lockViewModel: LockViewModel by viewModels()
 
     private lateinit var overlayPermissionAlertDialog: AlertDialog
@@ -53,6 +57,15 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         Timber.d("-_-_- onCreate $isLockScreen")
 
         loadBannerAd()
+
+        wordApiService.getWordLists()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Timber.d("$it")
+            }, {
+                Timber.e(it)
+            })
 
         // TODO: move to viewmodel
         versionApiService.getAppVersionStatus()

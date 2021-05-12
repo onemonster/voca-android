@@ -42,6 +42,7 @@ android {
         Korean {
             dimension 'default'
             applicationIdSuffix '.ko'
+            buildConfigField "String", "TARGET_LANGUAGE_PATH", "\"ko\""
         }
     }
 
