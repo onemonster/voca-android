@@ -18,6 +18,8 @@ class LockViewModel @Inject constructor(
     fun observeLockScreenOn(): Observable<Boolean> = lockScreenOnSubject.distinctUntilChanged()
     fun observeIsLockScreen(): Observable<Boolean> = isLockScreenSubject.distinctUntilChanged()
 
+    val isLockScreen: Boolean = isLockScreenSubject.value
+
     fun turnLockScreenOn() {
         appPreference.lockScreenOn = true
         lockScreenOnSubject.onNext(true)

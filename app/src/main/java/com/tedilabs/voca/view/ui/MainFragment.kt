@@ -9,11 +9,15 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tedilabs.voca.R
+import com.tedilabs.voca.analytics.EventLogger
 import com.tedilabs.voca.model.Example
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     private lateinit var tts: TextToSpeech
@@ -24,7 +28,11 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         fun create() = MainFragment()
     }
 
+    @Inject
+    lateinit var eventLogger: EventLogger
+
     private val lockViewModel: LockViewModel by activityViewModels()
+    private val wordViewModel: WordViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +67,12 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         }
 
         sound_button.setOnClickListener {
-            tts.speak("사과", TextToSpeech.QUEUE_FLUSH, null, "사과")
+            tts.speak(
+                wordViewModel.word.word,
+                TextToSpeech.QUEUE_FLUSH,
+                null,
+                wordViewModel.word.word
+            )
         }
 
         use_as_lock_screen_button.setOnClickListener {
@@ -74,15 +87,21 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             activity.finish()
         }
 
-        // Temporary
-        subject_word_text.text = "사과"
-        subject_type_text.text = "NOUN"
-        subject_pronunciation_text.text = "[사:과]"
+        next_button.setOnClickListener {
+            eventLogger.logClickNextWord(wordViewModel.word, lockViewModel.isLockScreen)
+            wordViewModel.showNextWord()
+        }
+
+        prev_button.setOnClickListener {
+            eventLogger.logClickPrevWord(wordViewModel.word, lockViewModel.isLockScreen)
+            wordViewModel.showPrevWord()
+        }
 
         definition_list.layoutManager = object : LinearLayoutManager(activity) {
             override fun canScrollVertically(): Boolean = false
         }
         definition_list.adapter = DefinitionAdapter().apply {
+            // Temporary
             definitions = listOf("Apple", "Red Apple")
         }
 
@@ -90,6 +109,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         example_list.adapter = ExampleAdapter {
             tts.speak(it, TextToSpeech.QUEUE_FLUSH, null, it)
         }.apply {
+            // Temporary
             examples = listOf(
                 Example(
                     "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
@@ -139,7 +159,17 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         lockViewModel.observeIsLockScreen()
             .subscribe({ isLockScreen ->
                 unlock_button.visibility = if (isLockScreen) View.VISIBLE else View.GONE
+            }, {
+                Timber.e(it)
+            })
+            .disposeOnDestroyView()
 
+        wordViewModel.observeWord()
+            .subscribe({ word ->
+                // Temporary
+                subject_word_text.text = word.word
+                subject_type_text.text = word.partOfSpeech
+                subject_pronunciation_text.text = word.pronunciation
             }, {
                 Timber.e(it)
             })
