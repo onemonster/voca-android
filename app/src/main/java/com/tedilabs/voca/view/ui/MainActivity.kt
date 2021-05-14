@@ -145,6 +145,12 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
         if (!isLockScreen) return
 
+        supportFragmentManager.findFragmentByTag(SettingFragment.TAG)?.let { settingFragment ->
+            supportFragmentManager.commit {
+                remove(settingFragment)
+            }
+        }
+
         Timber.d("-_-_- Setting up for lock screen")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
