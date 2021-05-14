@@ -29,6 +29,11 @@ class LockScreenService : Service() {
                 context.startService(intent)
             }
         }
+
+        fun stop(context: Context) {
+            val intent = Intent(context, LockScreenService::class.java)
+            context.stopService(intent)
+        }
     }
 
     private var lockScreenReceiver: BroadcastReceiver? = null
@@ -37,6 +42,7 @@ class LockScreenService : Service() {
         super.onCreate()
         Timber.d("-_-_- onCreate")
 
+        showForegroundNotification()
         registerLockScreenReceiver()
     }
 
@@ -47,11 +53,10 @@ class LockScreenService : Service() {
         unregisterLockScreenReceiver()
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Timber.d("-_-_- onStartCommand")
-        showForegroundNotification()
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Timber.d("-_-_- onStartCommand intent: $intent flags: $flags startId: $startId")
 
-        return START_REDELIVER_INTENT
+        return START_STICKY
     }
 
     override fun onBind(p0: Intent?): IBinder? = null
@@ -100,7 +105,8 @@ class LockScreenService : Service() {
             }
 
         val notificationBuilder = NotificationCompat.Builder(this, CHANNEL_ID)
-        val notification = notificationBuilder.setOngoing(true)
+        val notification = notificationBuilder
+            .setOngoing(true)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ContextCompat.getColor(this, R.color.primary))
             .setContentTitle("Voca lock screen") // TODO: strings.xml

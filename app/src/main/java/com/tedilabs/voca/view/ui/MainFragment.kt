@@ -148,7 +148,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     }
 
     private fun observeViewModels() {
-        lockViewModel.observeLockScreenOn()
+        lockViewModel.observeUseOnLockScreen()
             .subscribe({ lockScreenOn ->
                 use_as_lock_screen_button.visibility = if (lockScreenOn) View.GONE else View.VISIBLE
             }, {

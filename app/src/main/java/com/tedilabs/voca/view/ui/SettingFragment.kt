@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.tedilabs.voca.BuildConfig
 import com.tedilabs.voca.R
+import com.tedilabs.voca.lock.LockScreenService
 import com.tedilabs.voca.util.IntentUtil
 import kotlinx.android.synthetic.main.fragment_setting.*
 import timber.log.Timber
@@ -54,11 +55,17 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
     }
 
     private fun observeViewModels(activity: Activity) {
-        lockViewModel.observeLockScreenOn()
+        lockViewModel.observeUseOnLockScreen()
             .subscribe({ lockScreenOn ->
                 use_app_on_lock_screen_toggle.isChecked = lockScreenOn
-                if (lockScreenOn && !Settings.canDrawOverlays(activity)) {
-                    (activity as MainActivity).requestOverlayPermission()
+                if (lockScreenOn) {
+                    if (Settings.canDrawOverlays(activity)) {
+                        LockScreenService.start(activity)
+                    } else {
+                        (activity as MainActivity).requestOverlayPermission()
+                    }
+                } else {
+                    LockScreenService.stop(activity)
                 }
             }, {
                 Timber.e(it)
