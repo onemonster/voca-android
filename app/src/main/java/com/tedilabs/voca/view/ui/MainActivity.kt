@@ -102,12 +102,14 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
         initializeViews()
 
+        observeViewModels()
+
         overlayPermissionAlertDialog = AlertDialog.Builder(this)
             .setMessage(R.string.need_overlay_permission)
-            .setPositiveButton(R.string.need_overlay_permission_positive) { dialog, _ ->
+            .setPositiveButton(R.string.need_overlay_permission_positive) { _, _ ->
                 getOverlayPermission()
             }
-            .setNegativeButton(R.string.need_overlay_permission_negative) { dialog, _ -> }
+            .setNegativeButton(R.string.need_overlay_permission_negative) { _, _ -> }
             .setOnCancelListener { lockViewModel.turnLockScreenOff() }
             .create()
 
@@ -161,6 +163,20 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         supportFragmentManager.commit {
             add(R.id.main_fragment_container, MainFragment.create(), MainFragment.TAG)
         }
+    }
+
+    private fun observeViewModels() {
+        lockViewModel.observeUseOnLockScreen()
+            .subscribe({ lockScreenOn ->
+                if (lockScreenOn) {
+                    LockScreenService.start(this)
+                } else {
+                    LockScreenService.stop(this)
+                }
+            }, {
+                Timber.e(it)
+            })
+            .disposeOnDestroy()
     }
 
     fun showSettings() {

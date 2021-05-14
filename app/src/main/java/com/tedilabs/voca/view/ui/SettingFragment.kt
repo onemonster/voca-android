@@ -58,14 +58,8 @@ class SettingFragment : BaseFragment(R.layout.fragment_setting) {
         lockViewModel.observeUseOnLockScreen()
             .subscribe({ lockScreenOn ->
                 use_app_on_lock_screen_toggle.isChecked = lockScreenOn
-                if (lockScreenOn) {
-                    if (Settings.canDrawOverlays(activity)) {
-                        LockScreenService.start(activity)
-                    } else {
-                        (activity as MainActivity).requestOverlayPermission()
-                    }
-                } else {
-                    LockScreenService.stop(activity)
+                if (lockScreenOn && !Settings.canDrawOverlays(activity)) {
+                    (activity as MainActivity).requestOverlayPermission()
                 }
             }, {
                 Timber.e(it)
