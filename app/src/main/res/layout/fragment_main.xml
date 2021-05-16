@@ -9,6 +9,20 @@
     android:paddingHorizontal="@dimen/grid"
     >
 
+    <TextView
+        android:id="@+id/word_list_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="8dp"
+        android:textSize="17dp"
+        android:textColor="@color/black_font"
+        app:layout_constraintBottom_toBottomOf="@+id/logo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/logo"
+        tools:text="beginner"
+        app:drawableEndCompat="@drawable/more_arrow"
+        />
+
     <ImageView
         android:id="@+id/logo"
         android:layout_width="wrap_content"

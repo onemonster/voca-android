@@ -6,4 +6,24 @@ data class WordList(
     val targetLanguage: String,
     val version: String,
     val url: String
+) {
+    val key = WordListKey(
+        name = name,
+        version = version
+    )
+
+    companion object {
+        val default = WordList(
+            name = "",
+            sourceLanguage = "",
+            targetLanguage = "",
+            version = "",
+            url = ""
+        )
+    }
+}
+
+data class WordListKey(
+    val name: String,
+    val version: String
 )

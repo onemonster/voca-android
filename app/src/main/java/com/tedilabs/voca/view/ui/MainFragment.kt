@@ -12,6 +12,7 @@ import com.tedilabs.voca.R
 import com.tedilabs.voca.analytics.EventLogger
 import com.tedilabs.voca.model.Example
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import java.util.*
@@ -149,6 +150,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
 
     private fun observeViewModels() {
         lockViewModel.observeUseOnLockScreen()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ lockScreenOn ->
                 use_as_lock_screen_button.visibility = if (lockScreenOn) View.GONE else View.VISIBLE
             }, {
@@ -157,6 +159,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             .disposeOnDestroyView()
 
         lockViewModel.observeIsLockScreen()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ isLockScreen ->
                 unlock_button.visibility = if (isLockScreen) View.VISIBLE else View.GONE
             }, {
@@ -165,11 +168,21 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             .disposeOnDestroyView()
 
         wordViewModel.observeWord()
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ word ->
                 // Temporary
                 subject_word_text.text = word.word
                 subject_type_text.text = word.partOfSpeech
                 subject_pronunciation_text.text = word.pronunciation
+            }, {
+                Timber.e(it)
+            })
+            .disposeOnDestroyView()
+
+        wordViewModel.observeWordList()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                word_list_button.text = it.name
             }, {
                 Timber.e(it)
             })
