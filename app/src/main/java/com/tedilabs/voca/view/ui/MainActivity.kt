@@ -186,6 +186,13 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         }
     }
 
+    fun showWordLists() {
+        supportFragmentManager.commit {
+            add(R.id.main_fragment_container, WordListsFragment.create(), WordListsFragment.TAG)
+            addToBackStack(null)
+        }
+    }
+
     fun requestOverlayPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             overlayPermissionAlertDialog.show()

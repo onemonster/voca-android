@@ -67,6 +67,10 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             (activity as MainActivity).showSettings()
         }
 
+        word_list_button.setOnClickListener {
+            (activity as MainActivity).showWordLists()
+        }
+
         sound_button.setOnClickListener {
             tts.speak(
                 wordViewModel.word.word,

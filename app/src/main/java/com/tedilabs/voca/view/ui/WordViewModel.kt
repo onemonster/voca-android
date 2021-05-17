@@ -10,7 +10,6 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,9 +20,11 @@ class WordViewModel @Inject constructor(
 
     private val wordSubject = BehaviorSubject.createDefault(Word.default)
     private val wordListSubject = BehaviorSubject.createDefault(WordList.default)
+    private val wordListsSubject = BehaviorSubject.createDefault(emptyList<WordList>())
 
     fun observeWord(): Observable<Word> = wordSubject.hide()
     fun observeWordList(): Observable<WordList> = wordListSubject.hide()
+    fun observeWordLists(): Observable<List<WordList>> = wordListsSubject.hide()
 
     val word: Word = wordSubject.value
 
@@ -43,13 +44,19 @@ class WordViewModel @Inject constructor(
     fun getWordList(): Completable {
         return wordApiService.getWordLists()
             .doOnSuccess { wordLists ->
-                Timber.d("wordLists $wordLists")
+                wordListsSubject.onNext(wordLists)
                 if (wordListSubject.value == WordList.default) {
                     wordLists.find {
-                        it.key == appPreference.wordListKey
+                        it.key.name == appPreference.wordListKey.name
                     }?.let {
-                        setWordList(it)
+                        if (it.key.version == appPreference.wordListKey.version) {
+                            setWordList(it)
+                        } else {
+                            // TODO: download new database
+                            setWordList(it)
+                        }
                     } ?: wordLists.firstOrNull()?.let {
+                        // TODO: download new database
                         setWordList(it)
                     }
                 }
