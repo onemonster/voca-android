@@ -55,9 +55,10 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
         loadBannerAd()
 
-        wordViewModel.getWordList()
+        wordViewModel.initialize()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({}, {
+                Timber.d("-_-_- error $it")
                 Timber.e(it)
             })
 

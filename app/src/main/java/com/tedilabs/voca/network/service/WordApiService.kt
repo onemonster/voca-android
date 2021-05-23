@@ -25,4 +25,6 @@ class WordApiService(private val wordRetrofitService: WordRetrofitService) {
                 }
             }
     }
+
+    fun download(fileUrl: String) = wordRetrofitService.download(fileUrl)
 }

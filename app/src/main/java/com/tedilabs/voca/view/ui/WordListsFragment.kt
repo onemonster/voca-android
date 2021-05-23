@@ -6,6 +6,7 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tedilabs.voca.R
+import com.tedilabs.voca.util.unwrapOptional
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_word_lists.*
 import timber.log.Timber
@@ -36,13 +37,16 @@ class WordListsFragment : BaseFragment(R.layout.fragment_word_lists) {
         }
 
         word_list_list.layoutManager = LinearLayoutManager(context)
-        wordListAdapter = WordListAdapter { wordViewModel.setWordList(it) }
+        wordListAdapter = WordListAdapter {
+            wordViewModel.setWordList(it)
+        }
         word_list_list.adapter = wordListAdapter
     }
 
     private fun observeViewModels(context: Activity) {
         wordViewModel.observeWordList()
             .observeOn(AndroidSchedulers.mainThread())
+            .unwrapOptional()
             .subscribe({
                 wordListAdapter.wordList = it
             }, {

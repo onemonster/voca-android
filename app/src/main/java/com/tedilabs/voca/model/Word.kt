@@ -1,7 +1,7 @@
 package com.tedilabs.voca.model
 
 data class Word(
-    val id: Long,
+    val id: Int,
     val word: String,
     val partOfSpeech: String,
     val definitions: List<String>,

@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.tedilabs.voca.R
 import com.tedilabs.voca.analytics.EventLogger
 import com.tedilabs.voca.model.Example
+import com.tedilabs.voca.model.WordList
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import java.util.*
@@ -95,11 +97,15 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         next_button.setOnClickListener {
             eventLogger.logClickNextWord(wordViewModel.word, lockViewModel.isLockScreen)
             wordViewModel.showNextWord()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, { Timber.e(it) })
         }
 
         prev_button.setOnClickListener {
             eventLogger.logClickPrevWord(wordViewModel.word, lockViewModel.isLockScreen)
             wordViewModel.showPrevWord()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, { Timber.e(it) })
         }
 
         definition_list.layoutManager = object : LinearLayoutManager(activity) {
@@ -113,42 +119,6 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         example_list.layoutManager = LinearLayoutManager(activity)
         example_list.adapter = ExampleAdapter {
             tts.speak(it, TextToSpeech.QUEUE_FLUSH, null, it)
-        }.apply {
-            // Temporary
-            examples = listOf(
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-                Example(
-                    "나는 공부를 열심히 하는 학생입니다. 이것은 한국말 예문입니다.",
-                    "I am a student so I study hard."
-                ),
-            )
         }
     }
 
@@ -174,10 +144,12 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         wordViewModel.observeWord()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ word ->
-                // Temporary
                 subject_word_text.text = word.word
                 subject_type_text.text = word.partOfSpeech
                 subject_pronunciation_text.text = word.pronunciation
+                (definition_list.adapter as DefinitionAdapter).definitions = word.definitions
+                (example_list.adapter as ExampleAdapter).examples = word.examples
+                prev_button.visibility = if (word.id == 1) View.INVISIBLE else View.VISIBLE
             }, {
                 Timber.e(it)
             })
@@ -186,10 +158,24 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         wordViewModel.observeWordList()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
-                word_list_button.text = it.name
+                word_list_button.text = it.value()?.name ?: ""
             }, {
                 Timber.e(it)
             })
             .disposeOnDestroyView()
+
+        // Check if word is last in list
+        Observable.combineLatest(
+            wordViewModel.observeWordCount(),
+            wordViewModel.observeWord(),
+            { count, word -> count == word.id }
+        )
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                next_button.visibility = if (it) View.INVISIBLE else View.VISIBLE
+            }, {
+                Timber.e(it)
+            })
+
     }
 }
