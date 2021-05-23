@@ -27,7 +27,7 @@ class AppRepositoryManager(
     fun getWordRepository(wordList: WordList): Single<WordRepository> {
         val file = File(applicationContext.filesDir, wordList.dbUrl)
         return if (!file.exists()) {
-            Timber.d("getDatabase file does not exists! $file")
+            Timber.d("-_-_- getDatabase file does not exists! $file")
             wordApiService.download(wordList.url)
                 .subscribeOn(Schedulers.io())
                 .map { body ->
@@ -51,7 +51,7 @@ class AppRepositoryManager(
                 }
                 .ignoreElement()
         } else {
-            Timber.d("getDatabase file exists! $file")
+            Timber.d("-_-_- getDatabase file exists! $file")
             Completable.complete()
         }
             .andThen(Single.defer {

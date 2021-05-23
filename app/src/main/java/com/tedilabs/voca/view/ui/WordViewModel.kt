@@ -81,6 +81,7 @@ class WordViewModel @Inject constructor(
     fun initialize(): Completable {
         return wordApiService.getWordLists()
             .flatMapCompletable { wordLists ->
+                wordListsSubject.onNext(wordLists)
                 val wordList = wordLists.find {
                     it.name == appPreference.wordListName
                 } ?: wordLists.firstOrNull()

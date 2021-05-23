@@ -37,8 +37,13 @@ class WordListsFragment : BaseFragment(R.layout.fragment_word_lists) {
         }
 
         word_list_list.layoutManager = LinearLayoutManager(context)
-        wordListAdapter = WordListAdapter {
-            wordViewModel.setWordList(it)
+        wordListAdapter = WordListAdapter { wordList ->
+            wordViewModel.setWordList(wordList)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({}, {
+                    Timber.e(it)
+                })
+                .disposeOnDestroyView()
         }
         word_list_list.adapter = wordListAdapter
     }

@@ -46,7 +46,7 @@ class WordListAdapter(private val onItemClick: (WordList) -> Unit) :
     class WordListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         fun bind(wordList: WordList, isSelected: Boolean) {
             itemView.word_list_name_text.text = wordList.name
-            itemView.word_list_checkbox.isChecked = isSelected
+            itemView.word_list_checkbox.isActivated = isSelected
         }
     }
 }

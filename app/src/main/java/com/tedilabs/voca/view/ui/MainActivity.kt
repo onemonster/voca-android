@@ -58,7 +58,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         wordViewModel.initialize()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({}, {
-                Timber.d("-_-_- error $it")
                 Timber.e(it)
             })
 

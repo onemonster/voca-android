@@ -19,11 +19,12 @@
         tools:text="beginner"
         />
 
-    <RadioButton
+    <ImageView
         android:id="@+id/word_list_checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
+        android:src="@drawable/check_circle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
