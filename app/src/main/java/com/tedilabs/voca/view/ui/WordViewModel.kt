@@ -35,7 +35,7 @@ class WordViewModel @Inject constructor(
     fun observeWordLists(): Observable<List<WordList>> = wordListsSubject.hide()
     fun observeWordCount(): Observable<Int> = wordCountSubject.hide()
 
-    val word: Word = wordSubject.value
+    val word: Word get() = wordSubject.value
 
     private fun getWordRepository(): Single<WordRepository> {
         return wordListSubject

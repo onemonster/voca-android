@@ -10,8 +10,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tedilabs.voca.R
 import com.tedilabs.voca.analytics.EventLogger
-import com.tedilabs.voca.model.Example
-import com.tedilabs.voca.model.WordList
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -108,13 +106,8 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
                 .subscribe({}, { Timber.e(it) })
         }
 
-        definition_list.layoutManager = object : LinearLayoutManager(activity) {
-            override fun canScrollVertically(): Boolean = false
-        }
-        definition_list.adapter = DefinitionAdapter().apply {
-            // Temporary
-            definitions = listOf("Apple", "Red Apple")
-        }
+        definition_list.layoutManager = LinearLayoutManager(activity)
+        definition_list.adapter = DefinitionAdapter()
 
         example_list.layoutManager = LinearLayoutManager(activity)
         example_list.adapter = ExampleAdapter {
