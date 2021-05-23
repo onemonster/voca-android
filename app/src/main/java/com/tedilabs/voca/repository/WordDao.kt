@@ -9,6 +9,9 @@ interface WordDao {
     @Query("SELECT * FROM words")
     fun getAll(): Single<List<WordEntity>>
 
+    @Query("SELECT * FROM words WHERE id >= :id LIMIT :count")
+    fun getCurr(id: Int, count: Int): Single<List<WordEntity>>
+
     @Query("SELECT * FROM words WHERE id > :id LIMIT :count")
     fun getNext(id: Int, count: Int): Single<List<WordEntity>>
 

@@ -27,10 +27,10 @@ class WordRepository(
         }
 
     fun getCurrent(): Single<Word> {
-        return wordCache.find { it.id == cursor + 1 }?.let { cachedWord ->
+        return wordCache.find { it.id == cursor }?.let { cachedWord ->
             Single.just(cachedWord)
         } ?: run {
-            wordDao.getNext(cursor, PAGE_SIZE)
+            wordDao.getCurr(cursor, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .map { wordEntities ->
                     wordCache = wordEntities.toWords(moshi)

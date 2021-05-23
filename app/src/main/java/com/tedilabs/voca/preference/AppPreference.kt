@@ -15,7 +15,7 @@ class AppPreference @Inject constructor(
     var wordListName by prefString(sharedPreference, PrefKey.WORD_LIST_NAME)
 
     fun getCursor(wordList: WordList): Int =
-        sharedPreference.getInt(wordList.key, 0)
+        sharedPreference.getInt(wordList.key, 1)
 
     fun setCursor(wordList: WordList, cursor: Int) =
         sharedPreference.edit {
