@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="20dp"
+        android:layout_marginBottom="25dp"
         android:textColor="@color/example_translation_font"
         android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"

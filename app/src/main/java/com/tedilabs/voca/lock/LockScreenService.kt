@@ -110,8 +110,6 @@ class LockScreenService : Service() {
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ContextCompat.getColor(this, R.color.primary))
-            .setContentTitle("Voca lock screen") // TODO: strings.xml
-            .setContentText("Something Something") // TODO: strings.xml
             .setPriority(NotificationManager.IMPORTANCE_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .setContentIntent(pendingIntent)
