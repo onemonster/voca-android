@@ -54,26 +54,29 @@ class AppRepositoryManager(
             Timber.d("-_-_- getDatabase file exists! $file")
             Completable.complete()
         }
-            .andThen(Single.defer {
-                val key = wordList.key
-                val wordRepository = wordRepositoryCache[key] ?: run {
-                    val database = Room.databaseBuilder(
-                        applicationContext,
-                        AppDatabase::class.java,
-                        wordList.dbUrl
-                    )
-                        .createFromFile(file)
-                        .build()
-                    val wordRepository = WordRepository(
-                        wordList,
-                        database.wordDao(),
-                        appPreference,
-                        moshi,
-                    )
-                    wordRepositoryCache[key] = wordRepository
-                    wordRepository
+            .andThen(
+                Single.defer {
+                    val key = wordList.key
+                    val wordRepository = wordRepositoryCache[key] ?: run {
+                        val database = Room.databaseBuilder(
+                            applicationContext,
+                            AppDatabase::class.java,
+                            wordList.dbUrl
+                        )
+                            .createFromFile(file)
+                            .build()
+                        val wordRepository = WordRepository(
+                            wordList,
+                            database.wordDao(),
+                            appPreference,
+                            moshi,
+                        )
+                        wordRepositoryCache[key] = wordRepository
+                        wordRepository
+                    }
+                    Single.just(wordRepository)
                 }
-                Single.just(wordRepository)
-            })
+                    .subscribeOn(Schedulers.io())
+            )
     }
 }

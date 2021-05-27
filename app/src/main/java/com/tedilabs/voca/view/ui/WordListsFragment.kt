@@ -3,6 +3,7 @@ package com.tedilabs.voca.view.ui
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tedilabs.voca.R
@@ -40,8 +41,15 @@ class WordListsFragment : BaseFragment(R.layout.fragment_word_lists) {
         wordListAdapter = WordListAdapter { wordList ->
             wordViewModel.setWordList(wordList)
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe {
+                    progress.visibility = View.VISIBLE
+                }
+                .doFinally {
+                    progress.visibility = View.GONE
+                }
                 .subscribe({}, {
                     Timber.e(it)
+                    Toast.makeText(context, it.localizedMessage, Toast.LENGTH_SHORT).show()
                 })
                 .disposeOnDestroyView()
         }
