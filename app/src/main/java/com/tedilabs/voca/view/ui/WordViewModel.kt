@@ -46,6 +46,18 @@ class WordViewModel @Inject constructor(
             }
     }
 
+    fun randomizeWord(): Completable {
+        return getWordRepository()
+            .flatMap {
+                it.randomizeCursor()
+                it.getCurrent()
+            }
+            .doOnSuccess {
+                wordSubject.onNext(it)
+            }
+            .ignoreElement()
+    }
+
     fun showNextWord(): Completable {
         return getWordRepository()
             .flatMap { it.getNext() }

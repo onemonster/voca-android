@@ -44,7 +44,8 @@ fun List<WordEntity>.toWords(moshi: Moshi): List<Word> {
             id = word.id ?: 0,
             word = word.word ?: "",
             partOfSpeech = word.partOfSpeech ?: "",
-            definitions = word.definitions?.let { definitionsAdapter.fromJson(it) } ?: emptyList(),
+            definitions = word.translationWords?.let { definitionsAdapter.fromJson(it) }?.take(3)
+                ?: emptyList(),
             pronunciation = word.pronunciation ?: "",
             examples = word.examples?.let { examplesAdapter.fromJson(it) } ?: emptyList(),
         )

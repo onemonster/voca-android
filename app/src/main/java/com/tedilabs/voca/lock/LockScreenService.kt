@@ -110,6 +110,7 @@ class LockScreenService : Service() {
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_notification)
             .setColor(ContextCompat.getColor(this, R.color.primary))
+            .setContentTitle(getString(R.string.foreground_notification_title))
             .setPriority(NotificationManager.IMPORTANCE_MIN)
             .setCategory(Notification.CATEGORY_SERVICE)
             .setContentIntent(pendingIntent)

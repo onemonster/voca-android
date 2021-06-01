@@ -4,7 +4,7 @@
     <string name="channel_name">voca</string>
 
     <string name="unlock_screen">UNLOCK</string>
-    <string name="use_as_lock_screen">USE AS LOCK SCREEN</string>
+    <string name="use_as_lock_screen">USE ON LOCK SCREEN</string>
 
     <string name="feedback">Feedback</string>
     <string name="review">Review</string>
@@ -26,6 +26,8 @@
 
     <string name="share_app">Hey check out my app at: %1$s</string>
     <string name="share_app_chooser">Share this app with friends and study Korean together!</string>
+
+    <string name="foreground_notification_title">Long press to hide from notifications</string>
 
     <string name="progress_downloading_database">Setting word database</string>
 </resources>

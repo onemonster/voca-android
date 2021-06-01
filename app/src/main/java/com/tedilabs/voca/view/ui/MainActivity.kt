@@ -157,6 +157,12 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                         WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
             )
         }
+
+        wordViewModel.randomizeWord()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({}, {
+                Timber.e(it)
+            })
     }
 
     private fun initializeViews() {

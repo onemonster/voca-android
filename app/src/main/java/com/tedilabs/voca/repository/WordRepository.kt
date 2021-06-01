@@ -26,6 +26,10 @@ class WordRepository(
             appPreference.setCursor(wordList, value)
         }
 
+    fun randomizeCursor() {
+        cursor = (1 until wordCount).random()
+    }
+
     fun getCurrent(): Single<Word> {
         return wordCache.find { it.id == cursor }?.let { cachedWord ->
             Single.just(cachedWord)
