@@ -3,6 +3,7 @@ package com.tedilabs.voca.lock
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.tedilabs.voca.preference.AppPreference
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -17,7 +18,11 @@ class BootCompleteBroadcastReceiver : BroadcastReceiver() {
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
                 if (appPreference.lockScreenOn) {
-                    LockScreenService.start(context)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        context.startForegroundService(Intent(context, RestartService::class.java))
+                    } else {
+                        context.startService(Intent(context, LockScreenService::class.java))
+                    }
                 }
             }
         }

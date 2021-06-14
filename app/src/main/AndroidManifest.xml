@@ -42,9 +42,21 @@
         </activity>
 
         <service
+            android:name=".lock.RestartService"
+            android:enabled="true"
+            android:exported="true"
+            />
+
+        <service
             android:name=".lock.LockScreenService"
-            android:description="@string/lock_screen_description"
-            android:exported="false"
+            android:enabled="true"
+            android:exported="true"
+            />
+
+        <receiver
+            android:name=".lock.AlarmReceiver"
+            android:enabled="true"
+            android:exported="true"
             />
 
         <receiver

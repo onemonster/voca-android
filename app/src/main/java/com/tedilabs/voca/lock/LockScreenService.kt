@@ -1,37 +1,25 @@
 package com.tedilabs.voca.lock
 
-import android.app.*
+import android.app.ActivityManager
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.IBinder
-import androidx.core.content.ContextCompat
-import com.tedilabs.voca.R
-import com.tedilabs.voca.view.ui.MainActivity
+import com.tedilabs.voca.preference.AppPreference
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LockScreenService : Service() {
 
-    companion object {
-        private const val NOTIFICATION_CHANNEL_ID = "Voca"
-        private const val NOTIFICATION_ID = 19960113
-
-        fun start(context: Context) {
-            val intent = Intent(context, LockScreenService::class.java)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                context.startForegroundService(intent)
-            } else {
-                context.startService(intent)
-            }
-        }
-
-        fun stop(context: Context) {
-            val intent = Intent(context, LockScreenService::class.java)
-            context.stopService(intent)
-        }
-    }
+    @Inject
+    lateinit var appPreference: AppPreference
 
     private var lockScreenReceiver: BroadcastReceiver? = null
 
@@ -39,7 +27,6 @@ class LockScreenService : Service() {
         super.onCreate()
         Timber.d("-_-_- onCreate")
 
-        showForegroundNotification()
         registerLockScreenReceiver()
     }
 
@@ -48,6 +35,9 @@ class LockScreenService : Service() {
         Timber.d("-_-_- onDestroy")
 
         unregisterLockScreenReceiver()
+        if (appPreference.lockScreenOn) {
+            setAlarmTimer()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -76,44 +66,15 @@ class LockScreenService : Service() {
         lockScreenReceiver = null
     }
 
-    private fun showForegroundNotification() {
-        startForeground(NOTIFICATION_ID, createNotification())
-    }
-
-    private fun createNotification(): Notification {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            val channel = NotificationChannel(
-                NOTIFICATION_CHANNEL_ID,
-                getString(R.string.channel_name),
-                NotificationManager.IMPORTANCE_LOW
-            )
-                .also { channel ->
-                    channel.lightColor = ContextCompat.getColor(this, R.color.primary)
-                    channel.setShowBadge(false)
-                }
-            notificationManager.createNotificationChannel(channel)
+    private fun setAlarmTimer() {
+        val calendar = Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            add(Calendar.SECOND, 1)
         }
+        val intent = Intent(this, AlarmReceiver::class.java)
+        val sender = PendingIntent.getBroadcast(this, 0, intent, 0)
 
-        val pendingIntent: PendingIntent = MainActivity.intent(this).let { intent ->
-            PendingIntent.getActivity(this, 0, intent, 0)
-        }
-
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-        } else {
-            Notification.Builder(this)
-        }
-
-        return builder
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setColor(ContextCompat.getColor(this, R.color.primary))
-            .setContentTitle(getString(R.string.foreground_notification_title))
-            .setPriority(NotificationManager.IMPORTANCE_MIN)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .setContentIntent(pendingIntent)
-            .build()
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, sender)
     }
 }

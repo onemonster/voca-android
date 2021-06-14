@@ -1,5 +1,6 @@
 package com.tedilabs.voca.view.ui
 
+import android.app.ActivityManager
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
@@ -49,9 +50,14 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     private val isLockScreen: Boolean
         get() = intent.getBooleanExtra(LOCK_SCREEN_KEY, false)
 
+    lateinit var lockIntent: Intent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Timber.d("-_-_- onCreate $isLockScreen")
+
+        lockIntent = Intent(applicationContext, LockScreenService::class.java)
+        startLockScreen()
 
         loadBannerAd()
 
@@ -132,6 +138,7 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onDestroy() {
         ad_view.destroy()
         super.onDestroy()
+        stopLockScreen()
     }
 
     private fun setupIfLockScreen() {
@@ -175,9 +182,9 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
         lockViewModel.observeUseOnLockScreen()
             .subscribe({ lockScreenOn ->
                 if (lockScreenOn) {
-                    LockScreenService.start(this)
+                    startLockScreen()
                 } else {
-                    LockScreenService.stop(this)
+                    stopLockScreen()
                 }
             }, {
                 Timber.e(it)
@@ -238,11 +245,31 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (Settings.canDrawOverlays(this)) {
                     lockViewModel.turnLockScreenOn()
-                    LockScreenService.start(this)
                 } else {
                     lockViewModel.turnLockScreenOff()
                 }
             }
         }
+    }
+
+    private fun startLockScreen() {
+        if (!isServiceRunning(LockScreenService::class.java)) {
+            startService(lockIntent)
+        }
+    }
+
+    private fun stopLockScreen() {
+        stopService(lockIntent)
+    }
+
+    private fun isServiceRunning(serviceClass: Class<*>): Boolean {
+        val activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+        for (service in activityManager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
     }
 }
