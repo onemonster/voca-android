@@ -15,7 +15,6 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -85,20 +84,24 @@ class WordViewModel @Inject constructor(
             .doOnSuccess {
                 wordSubject.onNext(it)
                 wordListSubject.onNext(Optional.from(wordList))
-                appPreference.wordListName = wordList.name
+                appPreference.wordList = wordList
             }
             .ignoreElement()
     }
 
     fun initialize(): Completable {
         return wordApiService.getWordLists()
+            .onErrorResumeNext { t ->
+                appPreference.wordList?.let { wordList ->
+                    Single.just(listOf(wordList))
+                } ?: Single.error(t)
+            }
             .flatMapCompletable { wordLists ->
                 wordListsSubject.onNext(wordLists)
                 val wordList = wordLists.find {
-                    it.name == appPreference.wordListName
+                    it.name == appPreference.wordList?.name
                 } ?: wordLists.firstOrNull()
                 wordList?.let { _ ->
-                    Timber.d("-_-_- initialize $wordList")
                     setWordList(wordList)
                 } ?: Completable.complete()
             }
