@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tedilabs.voca.R
 import com.tedilabs.voca.analytics.EventLogger
+import com.tedilabs.voca.model.toPartOfSpeechString
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -49,7 +50,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeViews(requireActivity())
-        observeViewModels()
+        observeViewModels(requireActivity())
     }
 
     override fun onPause() {
@@ -117,7 +118,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
         }
     }
 
-    private fun observeViewModels() {
+    private fun observeViewModels(activity: Activity) {
         lockViewModel.observeUseOnLockScreen()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ lockScreenOn ->
@@ -140,7 +141,7 @@ class MainFragment : BaseFragment(R.layout.fragment_main) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ word ->
                 subject_word_text.text = word.word
-                subject_type_text.text = word.partOfSpeech
+                subject_type_text.text = word.partOfSpeech.toPartOfSpeechString(activity)
                 subject_pronunciation_text.text = word.pronunciation
                 (definition_list.adapter as DefinitionAdapter).definitions = word.definitions
                 (example_list.adapter as ExampleAdapter).examples = word.examples

@@ -30,4 +30,15 @@
     <string name="foreground_notification_title">Long press to hide from notifications</string>
 
     <string name="progress_downloading_database">Setting word database</string>
+
+    <string name="exclamation">Exclamation</string>
+    <string name="determiner">Determiner</string>
+    <string name="pronoun">Pronoun</string>
+    <string name="verb">Verb</string>
+    <string name="noun">Noun</string>
+    <string name="adverb">Adverb</string>
+    <string name="numerals">Numerals</string>
+    <string name="bound_noun">Bound Noun</string>
+    <string name="affix">Affix</string>
+    <string name="adjective">Adjective</string>
 </resources>
