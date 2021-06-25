@@ -1,6 +1,5 @@
 package com.tedilabs.voca.lock
 
-import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.Service
@@ -27,12 +26,14 @@ class LockScreenService : Service() {
         super.onCreate()
         Timber.d("-_-_- onCreate")
 
+        val notification = createNotification(this)
+        startForeground(NOTIFICATION_ID, notification)
         registerLockScreenReceiver()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.d("-_-_- onDestroy")
+        Timber.d("-_-_- onDestroy ${appPreference.lockScreenOn}")
 
         unregisterLockScreenReceiver()
         if (appPreference.lockScreenOn) {
@@ -69,7 +70,7 @@ class LockScreenService : Service() {
     private fun setAlarmTimer() {
         val calendar = Calendar.getInstance().apply {
             timeInMillis = System.currentTimeMillis()
-            add(Calendar.SECOND, 1)
+            add(Calendar.SECOND, 5)
         }
         val intent = Intent(this, AlarmReceiver::class.java)
         val sender = PendingIntent.getBroadcast(this, 0, intent, 0)

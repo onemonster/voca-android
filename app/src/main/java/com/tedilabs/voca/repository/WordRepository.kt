@@ -6,7 +6,6 @@ import com.tedilabs.voca.model.WordList
 import com.tedilabs.voca.preference.AppPreference
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import timber.log.Timber
 
 class WordRepository(
     private val wordList: WordList,
@@ -38,7 +37,6 @@ class WordRepository(
                 .subscribeOn(Schedulers.io())
                 .map { wordEntities ->
                     wordCache = wordEntities.toWords(moshi)
-                    Timber.d("-_-_- wordDao getCurrent ${wordCache.map { "${it.id} ${it.word}" }}")
                     wordCache.first()
                 }
         }
@@ -52,7 +50,6 @@ class WordRepository(
                 .subscribeOn(Schedulers.io())
                 .map { wordEntities ->
                     wordCache = wordEntities.toWords(moshi)
-                    Timber.d("-_-_- wordDao getNext ${wordCache.map { "${it.id} ${it.word}" }}")
                     wordCache.first()
                 }
         })
@@ -69,7 +66,6 @@ class WordRepository(
                 .subscribeOn(Schedulers.io())
                 .map { wordEntities ->
                     wordCache = wordEntities.reversed().toWords(moshi)
-                    Timber.d("-_-_- wordDao getPrev ${wordCache.map { "${it.id} ${it.word}" }}")
                     wordCache.last()
                 }
         })

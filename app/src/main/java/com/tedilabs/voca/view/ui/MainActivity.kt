@@ -54,7 +54,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Timber.d("-_-_- onCreate $isLockScreen")
 
         lockIntent = Intent(applicationContext, LockScreenService::class.java)
         startLockScreen()
@@ -121,7 +120,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         setIntent(intent)
-        Timber.d("-_-_- onNewIntent $isLockScreen")
         setupIfLockScreen()
     }
 
@@ -151,8 +149,6 @@ class MainActivity : BaseActivity(R.layout.activity_main) {
                 remove(settingFragment)
             }
         }
-
-        Timber.d("-_-_- Setting up for lock screen")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
